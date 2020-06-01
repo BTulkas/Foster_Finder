@@ -14,3 +14,10 @@ flask-sqlalchemy 2.4.3 (flask wrapper for sql alchemy)
 
 flask-migrate 2.3.4 (flask wrapper for alembic)
 (mako 1.1.2, alembic 1.4.2)
+
+pymysql 0.9.3
+
+pmysql[rsa](mysql dependency to work with caching_sha2_password & sha256_password)
+(cffi-1.14.0 cryptography-2.9.2 pycparser-2.20)
+
+flask-login 0.5.0
