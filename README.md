@@ -21,3 +21,6 @@ pmysql[rsa](mysql dependency to work with caching_sha2_password & sha256_passwor
 (cffi-1.14.0 cryptography-2.9.2 pycparser-2.20)
 
 flask-login 0.5.0
+
+email-validator 1.1.1
+(dnspython 1.16.0, idna 2.9)
