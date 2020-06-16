@@ -143,6 +143,9 @@ def edit_volunteer(id):
         if form.validate_on_submit():
             vol_edit.fname = form.fname.data
             vol_edit.lname = form.lname.data
+            vol_edit.active = form.active.data
+            vol_edit.black_listed = form.black_listed.data
+            vol_edit.notes = form.notes.data
 
             # Replaces old vol_edit.areas with new areas list
             new_areas = []

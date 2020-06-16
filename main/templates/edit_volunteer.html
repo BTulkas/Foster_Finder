@@ -103,9 +103,9 @@
     </p>
 
     <p>
-        {{ form.black_list.label }}<br/>
-        {{ form.black_list }}<br/>
-        {% for error in form.black_list.errors %}
+        {{ form.black_listed.label }}<br/>
+        {{ form.black_listed }}<br/>
+        {% for error in form.black_listed.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>
