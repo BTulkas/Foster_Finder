@@ -3,5 +3,6 @@
 {% block content %}
 
 <h1>Welcome {{ current_user.name }}</h1>
+<h2><a href="{{ url_for('add_volunteer') }}">Add Volunteer</a></h2>
 
 {% endblock %}

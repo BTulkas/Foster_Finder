@@ -5,13 +5,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from main import db, login
 
-"""
-phone_volunteers = db.Table('phone_vs_volunteers',
-                    db.Column('phone_number', db.Integer, db.ForeignKey('phone_number.phone_number'), primary_key=True),
-                    db.Column('vol_id', db.Integer, db.ForeignKey('volunteer.id'), primary_key=True))
-"""
 
-# Helper table for ManyToMany relationship, no class needed
+# Helper tables for ManyToMany relationships, no class needed
 areas_volunteers = db.Table('areas_vs_volunteers',
                  db.Column('area', db.String(80), db.ForeignKey('area.area'), primary_key=True),
                  db.Column('vol_id', db.Integer, db.ForeignKey('volunteer.id'), primary_key=True))
@@ -52,8 +47,8 @@ class Volunteer(db.Model):
     phone_numbers = db.relationship('PhoneNumber', lazy='subquery', backref=db.backref('volunteer', lazy=True))
     areas = db.relationship('Area', secondary=areas_volunteers, lazy='subquery',
                             backref=db.backref('volunteers', lazy=True))
-    can_foster = db.relationship('FosterSpecies', secondary=volunteers_species, lazy='subquery',
-                                 backref=db.backref('volunteers', lazy=True))
+    species = db.relationship('FosterSpecies', secondary=volunteers_species, lazy='subquery',
+                              backref=db.backref('volunteers', lazy=True))
     last_contacted = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     active = db.Column(db.Boolean, default=True)
     black_listed = db.Column(db.Boolean, default=False)
@@ -74,11 +69,16 @@ class PhoneNumber(db.Model):
     def __repr__(self):
         return str(self.dial_code) + "-" + str(self.phone_number)
 
+    def edit(self, new_data):
+        self.dial_code = new_data.dial_code
+        self.phone_number = new_data.phone_number
+        self.primary_contact = new_data.primary_contact
+
 
 class Area(db.Model):
     area = db.Column(db.String(80), primary_key=True)
     # OneToMany connection with Clinic. Connection with Volunteer is ManyToMany and defined with helper table
-    clinics = db.relationship('Clinic', backref=db.backref('area', lazy='subquery'), lazy=True, )
+    clinics = db.relationship('Clinic', backref=db.backref('areas', lazy='subquery'), lazy=True, )
 
     def __repr__(self):
         return self.area

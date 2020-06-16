@@ -8,5 +8,6 @@ def make_shell_context():
             'Clinic': Clinic,
             'Volunteer': Volunteer,
             'PhoneNumber': PhoneNumber,
-            'Area': Area
+            'Area': Area,
+            'FosterSpecies': FosterSpecies
             }

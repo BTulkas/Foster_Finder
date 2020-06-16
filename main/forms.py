@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, Selec
     SelectMultipleField, FormField, widgets, TextAreaField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
 
-from main.models import Clinic
+from main.models import Clinic, Area, FosterSpecies
 
 
 class LoginForm(FlaskForm):
@@ -13,24 +13,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
 
 
-class RegistrationForm(FlaskForm):
-    name = StringField('Organisation Name', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
-    area = SelectField('Area', validators=[DataRequired()])
-    submit = SubmitField('Register')
-
-    # Called by default with pattern validate_<field_name>
-    def validate_email(self, email):
-        clinic = Clinic.query.filter_by(email=email.data).first()
-        if clinic is not None:
-            raise ValidationError('This email has already been registered.')
-
-
 class PhoneForm(FlaskForm):
-    dial_code = IntegerField('Phone', validators=[DataRequired()])
-    phone_number = IntegerField('Number', validators=[DataRequired()])
+    dial_code = IntegerField('Phone')
+    phone_number = IntegerField('Number')
     primary_contact = BooleanField('Primary Phone Number')
     # I have no idea if this is actually needed
     # TODO: check
@@ -49,15 +34,34 @@ class PhoneForm(FlaskForm):
     """
 
 
+class RegistrationForm(FlaskForm):
+    name = StringField('Organisation Name', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    main_number = FormField(PhoneForm)
+    emergency_number = FormField(PhoneForm)
+    area = SelectField('Area', validators=[DataRequired()])
+    submit = SubmitField('Register')
+
+    # Called by default with pattern validate_<field_name>
+    def validate_email(self, email):
+        clinic = Clinic.query.filter_by(email=email.data).first()
+        if clinic is not None:
+            raise ValidationError('This email has already been registered.')
+
+
 class AddVolunteerForm(FlaskForm):
     fname = StringField('First name', validators=[DataRequired()])
     lname = StringField('Last name', validators=[DataRequired()])
     phone1 = FormField(PhoneForm)
     phone2 = FormField(PhoneForm)
-    area = SelectMultipleField('Area', validators=[DataRequired()],
-                               widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.RadioInput())
+    areas = SelectMultipleField('Area', validators=[DataRequired()],
+                                choices=[(i.area, i.area) for i in Area.query.all()],
+                                widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
     species = SelectMultipleField('Can Foster:', validators=[DataRequired()],
-                                  widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.RadioInput())
+                                  choices=[(j.species, j.species) for j in FosterSpecies.query.all()],
+                                  widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
     notes = TextAreaField('Notes')
     submit = SubmitField('Add')
 
@@ -68,10 +72,14 @@ class EditVolunteerForm(FlaskForm):
     lname = StringField('Last name', validators=[DataRequired()])
     phone1 = FormField(PhoneForm)
     phone2 = FormField(PhoneForm)
-    area = SelectMultipleField('Area', validators=[DataRequired()],
-                               widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.RadioInput())
+    areas = SelectMultipleField('Area', validators=[DataRequired()],
+                                # Query all areas and converts to touples (i.title, i.value) (here title=value)
+                                choices=[(i.area, i.area) for i in Area.query.all()],
+                                widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
     species = SelectMultipleField('Can Foster:', validators=[DataRequired()],
-                                  widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.RadioInput())
+                                  # Query all species and converts to touples (i.title, i.value) (here title=value)
+                                  choices=[(j.species, j.species) for j in FosterSpecies.query.all()],
+                                  widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
     notes = TextAreaField('Notes')
     active = BooleanField('Active')
     black_list = BooleanField('Black List')

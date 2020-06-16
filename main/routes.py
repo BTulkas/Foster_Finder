@@ -59,7 +59,7 @@ def register():
     # Generate raw list of all areas to choose)
     choices = Area.query.all()
     # Turns choices into touples (i.title, i.value) (title and value identical in this case)
-    form.area.choices = [(i.area, i.area) for i in choices]
+    form.area.choices = [(i.areas, i.areas) for i in choices]
     if form.validate_on_submit():
         clinic = Clinic(email=form.email.data, name=form.name.data, area_name=form.area.data)
         # Password is set after constructor for encryption.
@@ -68,14 +68,14 @@ def register():
         # Generates PhoneNumber(s) from form and assigns them to the new clinic
         main_number = PhoneNumber(dial_code=form.main_number.dial_code.data,
                                   phone_number=form.main_number.phone_number.data,
-                                  volunteer_id=current_user.id)
+                                  primary_contact=True)
         emergency_number = PhoneNumber(dial_code=form.emergency_number.dial_code.data,
                                        phone_number=form.emergency_number.phone_number.data,
-                                       volunteer_id=current_user.id)
+                                       primary_contact=False)
 
+        clinic.phone_numbers.append(main_number)
+        clinic.phone_numbers.append(emergency_number)
         db.session.add(clinic)
-        db.session.add(main_number)
-        db.session.add(emergency_number)
         db.session.commit()
         flash('Registration successful')
         return redirect(url_for('login'))
@@ -89,14 +89,12 @@ def add_volunteer():
 
     # Generate choices for SelectFields
     # Query all areas\species and converts into touples (i.title, i.value) (title and value identical in this case)
-    form.area.choices = [(i.area, i.area) for i in Area.query.all()]
-    form.species.choices = [(j.species, j.species) for j in FosterSpecies.query.all()]
 
     if request.method == 'POST':
         if form.validate_on_submit():
             vol = Volunteer(fname=form.fname.data, lname=form.lname.data)
             # Adds the selected areas to the vol object
-            for area in form.area.data:
+            for area in form.areas.data:
                 # Appends the areas as queried from the db (db.relationship represents a List)
                 vol.areas.append(Area.query.filter_by(area=area).first())
 
@@ -105,18 +103,17 @@ def add_volunteer():
                 # Appends the species as queried from the db (db.relationship represents a List)
                 vol.species.append(FosterSpecies.query.filter_by(species=species).first())
 
-            db.session.add(vol)
-
             # Generates PhoneNumber(s) from form and assigns them to the new volunteer
             number1 = PhoneNumber(dial_code=form.phone1.dial_code.data,
                                   phone_number=form.phone1.phone_number.data,
-                                  volunteer_id=vol.id)
+                                  primary_contact=form.phone1.primary_contact.data)
             number2 = PhoneNumber(dial_code=form.phone2.dial_code.data,
                                   phone_number=form.phone2.phone_number.data,
-                                  volunteer_id=vol.id)
+                                  primary_contact=form.phone2.primary_contact.data)
 
-            db.session.add(number1)
-            db.session.add(number2)
+            vol.phone_numbers.append(number1)
+            vol.phone_numbers.append(number2)
+            db.session.add(vol)
             db.session.commit()
             flash('Volunteer '+vol.fname + ' ' + vol.lname + ' registered successfully.')
             return render_template('add_volunteer.html', title='Add Volunteer', form=form)
@@ -132,41 +129,55 @@ def add_volunteer():
 @app.route('/<id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_volunteer(id):
-    form = EditVolunteerForm()
+    # Queries volunteer object through id to populate non-foreignkey fields
     vol_edit = Volunteer.query.filter_by(id=id).first()
+    form = EditVolunteerForm(obj=vol_edit)
+    #form.areas.data = vol_edit.areas
+    #form.species.default = vol_edit.species
 
-    # Generate choices for SelectFields
-    # Query all areas\species and converts into touples (i.title, i.value) (title and value identical in this case)
-    form.area.choices = [(i.area, i.area) for i in Area.query.all()]
-    form.species.choices = [(j.species, j.species) for j in FosterSpecies.query.all()]
+    # Queries the phone numbers through volunteer object (by primary true/false) to populate phone fields
+    phone1 = PhoneNumber.query.filter_by(volunteer_id=vol_edit.id, primary_contact=True).first()
+    phone2 = PhoneNumber.query.filter_by(volunteer_id=vol_edit.id, primary_contact=False).first()
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            vol = Volunteer(fname=form.fname.data, lname=form.lname.data)
-            # Adds the selected areas to the vol object
-            for area in form.area.data:
-                # Appends the areas as queried from the db (db.relationship represents a List)
-                vol.areas.append(Area.query.filter_by(area=area).first())
+            vol_edit.fname = form.fname.data
+            vol_edit.lname = form.lname.data
 
-            # Adds the selected species to the vol object
+            # Replaces old vol_edit.areas with new areas list
+            new_areas = []
+            for area in form.areas.data:
+                # Appends the areas as queried from the db (db.relationship represents a List)
+                new_areas.append(Area.query.filter_by(area=area).first())
+
+            vol_edit.areas = new_areas
+
+            # Replaces old vol_edit.species with new species list
+            new_species = []
             for species in form.species.data:
                 # Appends the species as queried from the db (db.relationship represents a List)
-                vol.species.append(FosterSpecies.query.filter_by(species=species).first())
+                new_species.append(FosterSpecies.query.filter_by(species=species).first())
 
-            db.session.add(vol)
+            vol_edit.species = new_species
 
-            # Generates PhoneNumber(s) from form and assigns them to the new volunteer
-            number1 = PhoneNumber(dial_code=form.phone1.dial_code.data,
-                                  phone_number=form.phone1.phone_number.data,
-                                  volunteer_id=vol.id)
-            number2 = PhoneNumber(dial_code=form.phone2.dial_code.data,
-                                  phone_number=form.phone2.phone_number.data,
-                                  volunteer_id=vol.id)
+            # Generates PhoneNumber(s) from form and assigns them to the volunteer
+            new_number1 = PhoneNumber(dial_code=form.phone1.dial_code.data,
+                                      phone_number=form.phone1.phone_number.data,
+                                      volunteer_id=vol_edit.id,
+                                      primary_contact=form.phone1.primary_contact.data)
+            new_number2 = PhoneNumber(dial_code=form.phone2.dial_code.data,
+                                      phone_number=form.phone2.phone_number.data,
+                                      volunteer_id=vol_edit.id,
+                                      primary_contact=form.phone2.primary_contact.data)
 
-            db.session.add(number1)
-            db.session.add(number2)
+            # Checks for changes and updates the phone objects accordingly
+            if phone1 != new_number1 and phone1 is not None:
+                phone1.edit(new_number1)
+            if phone2 != new_number2 and phone2 is not None:
+                phone2.edit(new_number2)
+
             db.session.commit()
-            flash('Volunteer '+vol.fname + ' ' + vol.lname + ' registered successfully.')
+            flash('Volunteer '+vol_edit.fname + ' ' + vol_edit.lname + ' registered successfully.')
             return render_template('edit_volunteer.html', title='Add Volunteer', form=form)
 
         else:
@@ -174,14 +185,15 @@ def edit_volunteer(id):
             return render_template('edit_volunteer.html', title='Add Volunteer', form=form)
 
     else:
-        form.fname.data = vol_edit.fname
-        form.lname.data = vol_edit.lname
-        #form.phone1.data = PhoneNumber.query.filter_by(volunteer_id=vol_edit.id, primary_contact=True).first()
-        form.phone1.dial_code.data = PhoneNumber.query.filter_by(volunteer_id=vol_edit.id).first().dial_code
-        #form.phone2.data = PhoneNumber.query.filter_by(volunteer_id=vol_edit.id)[1]
-        form.area.data = vol_edit.areas
-        form.species.data = vol_edit.can_foster
-        form.active.data = vol_edit.active
-        form.black_list.data = vol_edit.black_listed
-        form.notes.data = vol_edit.notes
+
+        if phone1 is not None:
+            form.phone1.dial_code.data = phone1.dial_code
+            form.phone1.phone_number.data = phone1.phone_number
+            form.phone1.primary_contact.data = phone1.primary_contact
+
+        if phone2 is not None:
+            form.phone2.dial_code.data = phone2.dial_code
+            form.phone2.phone_number.data = phone2.phone_number
+            form.phone2.primary_contact.data = phone2.primary_contact
+
         return render_template('edit_volunteer.html', title='Add Volunteer', form=form)
