@@ -5,4 +5,36 @@
 <h1>Welcome {{ current_user.name }}</h1>
 <h2><a href="{{ url_for('add_volunteer') }}">Add Volunteer</a></h2>
 
+<h2>Sort By</h2>
+<form action="" method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <span>
+        {{ form.areas.label }}<br/>
+        {{ form.areas }}<br/>
+        {% for error in form.areas.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+
+        {{ form.species.label }}<br/>
+        {{ form.species }}<br/>
+        {% for error in form.species.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </span>
+    <p>
+        {{ form.submit() }}
+    </p>
+</form>
+
+{% if prev_url %}
+<a href="{{ prev_url }}">Previous</a>
+{% endif %}
+{% for volunteer in volunteers %}
+    {% include '_volunteer.html' %}
+{% endfor %}
+{% if next_url %}
+<a href="{{ next_url }}">Next</a>
+{% endif %}
+
+
 {% endblock %}

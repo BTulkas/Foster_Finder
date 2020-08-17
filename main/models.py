@@ -59,8 +59,8 @@ class Volunteer(db.Model):
 
 
 class PhoneNumber(db.Model):
-    dial_code = db.Column(db.Integer, primary_key=True)
-    phone_number = db.Column(db.Integer, primary_key=True)
+    dial_code = db.Column(db.String(3), primary_key=True)
+    phone_number = db.Column(db.String(7), primary_key=True)
     primary_contact = db.Column(db.Boolean, default=False)
     # Foreignkey to connect to either Clinic or Volunteer as ManyToOne
     clinic_id = db.Column(db.Integer, db.ForeignKey('clinic.id'), nullable=True)
@@ -69,10 +69,19 @@ class PhoneNumber(db.Model):
     def __repr__(self):
         return str(self.dial_code) + "-" + str(self.phone_number)
 
+    # Used in routes to check for empty phone numbers with other attributes before saving to db.
+    def not_empty(self):
+        if not self.dial_code and not self.phone_number:
+            return False
+        else:
+            return True
+
     def edit(self, new_data):
         self.dial_code = new_data.dial_code
         self.phone_number = new_data.phone_number
         self.primary_contact = new_data.primary_contact
+        self.clinic_id = new_data.clinic_id
+        self.volunteer_id = new_data.volunteer_id
 
 
 class Area(db.Model):

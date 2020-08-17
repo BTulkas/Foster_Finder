@@ -1,0 +1,70 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Edit Profile</h1>
+
+<form action="" method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.name.label }}<br/>
+        {{ form.name(size=80) }}<br/>
+        {% for error in form.name.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.main_number.dial_code.label }}<br/>
+        {{ form.main_number.dial_code(size=32) }}<br/>
+        {% for error in form.main_number.dial_code.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    
+    <p>
+        {{ form.main_number.phone_number.label }}<br/>
+        {{ form.main_number.phone_number(size=32) }}<br/>
+        {% for error in form.main_number.phone_number.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    
+        
+    <p>
+        {{ form.emergency_number.dial_code.label }}<br/>
+        {{ form.emergency_number.dial_code(size=32) }}<br/>
+        {% for error in form.emergency_number.dial_code.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    
+    <p>
+        {{ form.emergency_number.phone_number.label }}<br/>
+        {{ form.emergency_number.phone_number(size=32) }}<br/>
+        {% for error in form.emergency_number.phone_number.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    
+
+    <p>
+        {{ form.area.label }}<br/>
+        {{ form.area }}<br/>
+        {% for error in form.area.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.main_number.clinic_id(value=current_user.id) }}
+    </p>
+    <p>
+        {{ form.emergency_number.clinic_id(value=current_user.id) }}
+    </p>
+
+        
+    <p>
+        {{ form.submit() }}
+    </p>
+
+</form>
+{% endblock %}

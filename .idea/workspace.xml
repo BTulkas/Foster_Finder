@@ -3,8 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="cd022b79-b4c6-437f-9611-1cd299d604e9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/foster_finder.py" beforeDir="false" afterPath="$PROJECT_DIR$/foster_finder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/edit_volunteer.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/edit_volunteer.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/README" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/alembic.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/script.py.mako" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/versions/9c8be9044575_resetting_all_migrations_due_to_schema_.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,6 +51,7 @@
       <recent name="E:\Python\Foster_Finder\main" />
     </key>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -55,10 +66,18 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="586" y="198" key="#Inspections" timestamp="1597581374673">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="586" y="198" key="#Inspections/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1597581374673" />
     <state x="808" y="222" key="RollbackChangesDialog" timestamp="1592307184732">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="808" y="222" key="RollbackChangesDialog/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1592307184732" />
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1592579063719">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1592579063719" />
   </component>
   <component name="masterDetails">
     <states>

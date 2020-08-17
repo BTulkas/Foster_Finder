@@ -45,7 +45,11 @@
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>
-
+    
+    <p>
+        {{ form.phone1.volunteer_id(value=id) }}
+    </p>
+    
     <p>
         {{ form.phone2.dial_code.label }}<br/>
         {{ form.phone2.dial_code(size=32) }}<br/>
@@ -69,6 +73,12 @@
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>
+    
+    
+    <p>
+        {{ form.phone2.volunteer_id(value=id) }}
+    </p>
+    
     
     <p>
         {{ form.areas.label }}<br/>
@@ -109,7 +119,6 @@
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>
-
     <p>
         {{ form.submit() }}
     </p>

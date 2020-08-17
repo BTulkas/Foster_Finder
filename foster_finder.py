@@ -9,5 +9,5 @@ def make_shell_context():
             'Volunteer': Volunteer,
             'PhoneNumber': PhoneNumber,
             'Area': Area,
-            'FosterSpecies': FosterSpecies
+            'FosterSpecies': FosterSpecies,
             }
