@@ -27,14 +27,15 @@
 </form>
 
 {% if prev_url %}
-<a href="{{ prev_url }}">Previous</a>
+    <a href="{{ prev_url }}">Previous</a>
 {% endif %}
+
 {% for volunteer in volunteers %}
     {% include '_volunteer.html' %}
 {% endfor %}
-{% if next_url %}
-<a href="{{ next_url }}">Next</a>
-{% endif %}
 
+{% if next_url %}
+    <a href="{{ next_url }}">Next</a>
+{% endif %}
 
 {% endblock %}

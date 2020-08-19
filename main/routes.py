@@ -17,34 +17,28 @@ def index():
 
     form = QueryForm()
 
+    if request.args.get('species_data'):
+        form.species.data = request.args.get('species_data')
+
     vol_species = []
     for s in FosterSpecies.query.all():
-        vol_species.append(s)
+        vol_species.append(s.species)
 
-    if form.validate():
+    if form.validate() and form.species.data:
         searched_species = []
         for s in form.species.data:
             searched_species.append(s)
         vol_species = searched_species
-
-    raw_sql = "SELECT distinct v.* FROM foster_finder.volunteer v join foster_finder.volunteers_vs_species" \
-              " vs on v.id = vs.vol_id where vs.foster_species in ("
-
-    for s in vol_species:
-        raw_sql += s.species + ", "
-
-    #raw_sql += ");"
-
-    # Pagination stuff
-        #.from_statement(text(raw_sql))
+        
     page = request.args.get('page', 1, type=int)
     volunteers = Volunteer.query\
         .join(Volunteer.species)\
-        .filter_by(Volunteer.species.any(FosterSpecies.species == [s for s in vol_species]))\
-        .order_by(Volunteer.last_contacted).paginate(page, 1, False)
-    next_url = url_for('index', page=volunteers.next_num) if volunteers.has_next else None
-    prev_url = url_for('index', page=volunteers.prev_num) if volunteers.has_prev else None
-
+        .filter(FosterSpecies.species.in_(vol_species))\
+        .distinct()\
+        .order_by(Volunteer.last_contacted)\
+        .paginate(page, 1, False)
+    next_url = url_for('index', page=volunteers.next_num, species_data=list(form.species.data)) if volunteers.has_next else None
+    prev_url = url_for('index', page=volunteers.prev_num, species_data=list(form.species.data)) if volunteers.has_prev else None
     return render_template('index.html', form=form, title="Made It", volunteers=volunteers.items, next_url=next_url,
                            prev_url=prev_url)
 

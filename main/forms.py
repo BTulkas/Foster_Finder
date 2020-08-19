@@ -93,12 +93,12 @@ class VolunteerForm(FlaskForm):
 
 
 class QueryForm(FlaskForm):
-    species = SelectMultipleField('Will Foster:', validators=[DataRequired()],
+    species = SelectMultipleField('Will Foster:', validators=[],
                                   # Query all species and converts to tuples (j.title, j.value) (here title=value)
                                   choices=[(j.species, j.species) for j in FosterSpecies.query.all()],
                                   widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput())
 
-    areas = SelectMultipleField('Area', validators=[DataRequired()],
+    areas = SelectMultipleField('Area', validators=[],
                                 # Query all areas and converts to tuples (i.title, i.value) (here title=value)
                                 choices=[(i.area, i.area) for i in Area.query.all()],
                                 widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput()
