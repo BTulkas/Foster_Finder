@@ -17,40 +17,37 @@ def index():
 
     form = QueryForm()
 
-    if request.args.get('species_data'):
-        form.species.data = request.args.get('species_data')
-
-    vol_species = []
-    for s in FosterSpecies.query.all():
-        vol_species.append(s.species)
-
+    # Called when submitting search form
     if form.validate() and form.species.data:
-        searched_species = []
-        for s in form.species.data:
-            searched_species.append(s)
-        vol_species = searched_species
-        
-    page = request.args.get('page', 1, type=int)
+        # Initializes vol_species for query.filter by user search parameters and resets pagination page
+        vol_species = [s for s in form.species.data]
+        page = 1
+
+    # Called when using next\prev url
+    elif request.args.get('species_data'):
+        # Pre-populates form field and initializes vol_species for query.filter from args passed in next\prev url
+        form.species.data = request.args.getlist('species_data')
+        vol_species = request.args.getlist('species_data')
+        # Sets page from args
+        page = request.args.get('page', 1, type=int)
+
+    # Called when passing empty form
+    else:
+        # Initializes vol_species for query.filter to all species as default and resets page
+        vol_species = [s.species for s in FosterSpecies.query.all()]
+        page = 1
+
     volunteers = Volunteer.query\
         .join(Volunteer.species)\
         .filter(FosterSpecies.species.in_(vol_species))\
         .distinct()\
         .order_by(Volunteer.last_contacted)\
         .paginate(page, 1, False)
-    next_url = url_for('index', page=volunteers.next_num, species_data=list(form.species.data)) if volunteers.has_next else None
-    prev_url = url_for('index', page=volunteers.prev_num, species_data=list(form.species.data)) if volunteers.has_prev else None
+
+    next_url = url_for('index', page=volunteers.next_num, species_data=form.species.data) if volunteers.has_next else None
+    prev_url = url_for('index', page=volunteers.prev_num, species_data=form.species.data) if volunteers.has_prev else None
     return render_template('index.html', form=form, title="Made It", volunteers=volunteers.items, next_url=next_url,
                            prev_url=prev_url)
-
-    """
-    # Pagination stuff
-    page = request.args.get('page', 1, type=int)
-    volunteers = Volunteer.query.order_by(Volunteer.last_contacted).paginate(page, 1, False)
-    next_url = url_for('index', page=volunteers.next_num) if volunteers.has_next else None
-    prev_url = url_for('index', page=volunteers.prev_num) if volunteers.has_prev else None
-
-    return render_template('index.html', form=form, title="Made It", volunteers=volunteers.items, next_url=next_url, prev_url=prev_url)
-    """
 
 
 @app.route('/login', methods=['GET', 'POST'])
