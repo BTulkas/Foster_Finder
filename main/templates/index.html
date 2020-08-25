@@ -5,24 +5,36 @@
 <h1>Welcome {{ current_user.name }}</h1>
 <h2><a href="{{ url_for('add_volunteer') }}">Add Volunteer</a></h2>
 
+<h2>Search</h2>
+<form action="" method="POST" novalidate>
+    {{ search_form.hidden_tag() }}
+    <p>First Name</p>
+    <p>{{ search_form.fname(size=80) }}</p>
+    <p> Last Name</p>
+    <p>{{ search_form.lname(size=80) }} </p>
+    <p>Phone Number</p>
+    <p>{{ search_form.dial_code }}{{ search_form.phone_number }}</p>
+    <p> {{ search_form.submit() }}</p>
+</form><br/><br/>
+
 <h2>Sort By</h2>
 <form action="" method="POST" novalidate>
-    {{ form.hidden_tag() }}
+    {{ param_form.hidden_tag() }}
     <span>
-        {{ form.areas.label }}<br/>
-        {{ form.areas }}<br/>
-        {% for error in form.areas.errors %}
+        {{ param_form.areas.label }}<br/>
+        {{ param_form.areas }}<br/>
+        {% for error in param_form.areas.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
 
-        {{ form.species.label }}<br/>
-        {{ form.species }}<br/>
-        {% for error in form.species.errors %}
+        {{ param_form.species.label }}<br/>
+        {{ param_form.species }}<br/>
+        {% for error in param_form.species.errors %}
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </span>
     <p>
-        {{ form.submit() }}
+        {{ param_form.submit() }}
     </p>
 </form>
 

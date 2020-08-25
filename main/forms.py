@@ -74,8 +74,8 @@ class ClinicForm(FlaskForm):
 
 
 class VolunteerForm(FlaskForm):
-    fname = StringField('First name', validators=[DataRequired()])
-    lname = StringField('Last name', validators=[DataRequired()])
+    fname = StringField('First Name', validators=[DataRequired()])
+    lname = StringField('Last Name', validators=[DataRequired()])
     phone1 = FormField(PhoneForm)
     phone2 = FormField(PhoneForm)
     areas = SelectMultipleField('Area', validators=[DataRequired()],
@@ -103,5 +103,13 @@ class QueryForm(FlaskForm):
                                 choices=[(i.area, i.area) for i in Area.query.all()],
                                 widget=widgets.ListWidget(prefix_label=False), option_widget=widgets.CheckboxInput()
                                 )
+    submit = SubmitField('Search')
+
+
+class SearchForm(FlaskForm):
+    fname = StringField('Fist Name')
+    lname = StringField('Last Name')
+    dial_code = StringField('Phone', validators=[Regexp("^[0-9]{2}$|^[0-9]{3}$", message="Not a valid dial code."), Optional()])
+    phone_number = StringField('Number', validators=[Regexp("^[0-9]{7}$", message="Not a valid phone number."), Optional()])
     submit = SubmitField('Search')
 

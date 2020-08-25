@@ -8,8 +8,8 @@ from main import db, login
 
 # Helper tables for ManyToMany relationships, no class needed
 areas_volunteers = db.Table('areas_vs_volunteers',
-                 db.Column('area', db.String(80), db.ForeignKey('area.area'), primary_key=True),
-                 db.Column('vol_id', db.Integer, db.ForeignKey('volunteer.id'), primary_key=True))
+                            db.Column('area', db.String(80), db.ForeignKey('area.area'), primary_key=True),
+                            db.Column('vol_id', db.Integer, db.ForeignKey('volunteer.id'), primary_key=True))
 
 
 volunteers_species = db.Table('volunteers_vs_species',

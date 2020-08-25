@@ -1,0 +1,33 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h2>Search</h2>
+<form action="" method="POST" novalidate>
+    {{ search_form.hidden_tag() }}
+    <p>First Name</p>
+    <p>{{ search_form.fname(size=80) }}</p>
+    <p> Last Name</p>
+    <p>{{ search_form.lname(size=80) }} </p>
+    <p>Phone Number</p>
+    <p>{{ search_form.dial_code }}{{ search_form.phone_number }}</p>
+    <p> {{ search_form.submit() }}</p>
+</form><br/><br/>
+
+{% if search_results %}
+{% for volunteer in search_results %}
+    {% include '_volunteer.html' %}
+{% endfor %}
+
+{% if prev_url %}
+    <a href="{{ prev_url }}">Previous</a>
+{% endif %}
+
+{% if next_url %}
+    <a href="{{ next_url }}">Next</a>
+{% endif %}
+{% else %}
+<p>No such volunteer.</p>
+{% endif %}
+
+{% endblock %}

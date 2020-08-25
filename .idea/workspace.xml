@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="cd022b79-b4c6-437f-9611-1cd299d604e9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/routes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +70,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="808" y="222" key="RollbackChangesDialog/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1592307184732" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1597839946413">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1597839946413" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1592579063719">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

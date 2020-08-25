@@ -1,12 +1,12 @@
 from flask_login import current_user, login_user, logout_user, login_required
-from sqlalchemy import or_, text
+from sqlalchemy import or_
 from werkzeug.urls import url_parse
 from werkzeug.utils import redirect
 
-from main import app, db, models
+from main import app, db
 from flask import render_template, flash, url_for, request
 
-from main.forms import LoginForm, ClinicForm, VolunteerForm, PhoneForm, QueryForm
+from main.forms import LoginForm, ClinicForm, VolunteerForm, QueryForm, SearchForm
 from main.models import Clinic, Area, Volunteer, PhoneNumber, FosterSpecies
 
 
@@ -15,39 +15,64 @@ from main.models import Clinic, Area, Volunteer, PhoneNumber, FosterSpecies
 @login_required
 def index():
 
-    form = QueryForm()
+    search_form = SearchForm(prefix='search_form')
+    param_form = QueryForm(prefix='param_form')
 
-    # Called when submitting search form
-    if form.validate() and form.species.data:
-        # Initializes vol_species for query.filter by user search parameters and resets pagination page
-        vol_species = [s for s in form.species.data]
+    if search_form.validate_on_submit() and search_form.data:
+        return search(search_form.fname.data, search_form.lname.data,
+                      search_form.dial_code.data, search_form.phone_number.data)
+
+    if param_form.validate_on_submit():
+        # Resets page on search
         page = 1
-
-    # Called when using next\prev url
-    elif request.args.get('species_data'):
-        # Pre-populates form field and initializes vol_species for query.filter from args passed in next\prev url
-        form.species.data = request.args.getlist('species_data')
-        vol_species = request.args.getlist('species_data')
+    else:
         # Sets page from args
         page = request.args.get('page', 1, type=int)
 
-    # Called when passing empty form
+    if param_form.is_submitted() and param_form.species.data:
+        # Called when submitting search form
+        # Initializes species args for query.filter by user search parameters
+        vol_species = [s for s in param_form.species.data]
+    elif request.args.get('species'):
+        # Called when using next\prev url
+        # (P)re-populates form field and initializes species args for query.filter from args passed in next\prev url
+        param_form.species.data = request.args.getlist('species')
+        vol_species = request.args.getlist('species')
     else:
-        # Initializes vol_species for query.filter to all species as default and resets page
+        # Called when passing empty form
+        # Initializes species args for query.filter to all species as default
         vol_species = [s.species for s in FosterSpecies.query.all()]
-        page = 1
+
+    if param_form.is_submitted() and param_form.areas.data:
+        # Called when submitting search form
+        # Initializes areas args for query.filter by user search parameters
+        vol_areas = [a for a in param_form.areas.data]
+    elif request.args.getlist('areas'):
+        # Called when using next\prev url
+        # (P)re-populates form field and initializes species args for query.filter from args passed in next\prev url
+        param_form.areas.data = request.args.getlist('areas')
+        vol_areas = request.args.getlist('areas')
+    else:
+        # Called when passing empty form
+        # Initializes areas args for query.filter to clinic area as default
+        vol_areas = current_user.area_name
+        param_form.areas.data = vol_areas
 
     volunteers = Volunteer.query\
         .join(Volunteer.species)\
+        .join(Volunteer.areas)\
         .filter(FosterSpecies.species.in_(vol_species))\
+        .filter(Area.area.in_(vol_areas))\
         .distinct()\
         .order_by(Volunteer.last_contacted)\
         .paginate(page, 1, False)
 
-    next_url = url_for('index', page=volunteers.next_num, species_data=form.species.data) if volunteers.has_next else None
-    prev_url = url_for('index', page=volunteers.prev_num, species_data=form.species.data) if volunteers.has_prev else None
-    return render_template('index.html', form=form, title="Made It", volunteers=volunteers.items, next_url=next_url,
-                           prev_url=prev_url)
+    next_url = url_for('index', page=volunteers.next_num, species=param_form.species.data, areas=param_form.areas.data)\
+        if volunteers.has_next else None
+    prev_url = url_for('index', page=volunteers.prev_num, species=param_form.species.data, areas=param_form.areas.data)\
+        if volunteers.has_prev else None
+    return render_template('index.html', param_form=param_form, search_form=search_form, title="Made It",
+                           volunteers=volunteers.items, next_url=next_url, prev_url=prev_url)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -277,11 +302,11 @@ def edit_volunteer(id):
             # Generates PhoneNumber(s) from form
             new_number1 = PhoneNumber(dial_code=form.phone1.dial_code.data,
                                       phone_number=form.phone1.phone_number.data,
-                                      volunteer_id=vol_edit.id,
+                                      volunteer_id=int(vol_edit.id),
                                       primary_contact=form.phone1.primary_contact.data)
             new_number2 = PhoneNumber(dial_code=form.phone2.dial_code.data,
                                       phone_number=form.phone2.phone_number.data,
-                                      volunteer_id=vol_edit.id,
+                                      volunteer_id=int(vol_edit.id),
                                       primary_contact=form.phone2.primary_contact.data)
 
             # Prevents duplicates that can't be caught by PhoneForm.validate
@@ -357,3 +382,46 @@ def edit_volunteer(id):
         form.phone2.volunteer_id.data = vol_edit.id
 
         return render_template('edit_volunteer.html', title='Edit Volunteer', id=int(id), form=form)
+
+
+@login_required
+def search(fname, lname, dial_code, phone_num):
+
+    search_form = SearchForm(prefix='search_form')
+
+    if search_form.validate_on_submit() and search_form.data:
+        return search(search_form.fname.data, search_form.lname.data,
+                      search_form.dial_code.data, search_form.phone_number.data)
+
+    if search_form.validate_on_submit():
+        page = 1
+    else:
+        page = request.args.get('page', 1, type=int)
+
+    if dial_code and phone_num:
+        query = Volunteer.query\
+            .join(Volunteer.phone_numbers)\
+            .filter(PhoneNumber.dial_code == dial_code)\
+            .filter(PhoneNumber.phone_number == phone_num)\
+            .distinct()
+    elif not fname or not lname:
+        query = Volunteer.query\
+            .filter(or_(Volunteer.fname.ilike(fname), Volunteer.lname.ilike(lname)))\
+            .distinct()
+    else:
+        query = Volunteer.query\
+            .filter(Volunteer.fname.ilike(fname))\
+            .filter(Volunteer.lname.ilike(lname))\
+            .distinct()
+
+    search_results = query.paginate(page, 10, False)
+
+    next_url = url_for('search', page=search_results.next_num)\
+        if search_results.has_next else None
+    prev_url = url_for('search', page=search_results.prev_num)\
+        if search_results.has_prev else None
+
+    return render_template('search_volunteer.html', search_form=search_form, search_results=search_results.items,
+                           next_url=next_url, prev_url=prev_url)
+
+
