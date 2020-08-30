@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask_login import current_user, login_user, logout_user, login_required
 from sqlalchemy import or_
 from werkzeug.urls import url_parse
@@ -18,6 +20,7 @@ def index():
     search_form = SearchForm(prefix='search_form')
     param_form = QueryForm(prefix='param_form')
 
+    # Calls the search function when form is submitted
     if search_form.validate_on_submit() and search_form.data:
         return search(search_form.fname.data, search_form.lname.data,
                       search_form.dial_code.data, search_form.phone_number.data)
@@ -26,7 +29,7 @@ def index():
         # Resets page on search
         page = 1
     else:
-        # Sets page from args
+        # Sets page from args for next\prev
         page = request.args.get('page', 1, type=int)
 
     if param_form.is_submitted() and param_form.species.data:
@@ -63,6 +66,8 @@ def index():
         .join(Volunteer.areas)\
         .filter(FosterSpecies.species.in_(vol_species))\
         .filter(Area.area.in_(vol_areas))\
+        .filter(Volunteer.active)\
+        .filter(Volunteer.black_listed.is_(False))\
         .distinct()\
         .order_by(Volunteer.last_contacted)\
         .paginate(page, 1, False)
@@ -389,30 +394,36 @@ def search(fname, lname, dial_code, phone_num):
 
     search_form = SearchForm(prefix='search_form')
 
+    # Resets the search page on search from inside the search page
     if search_form.validate_on_submit() and search_form.data:
         return search(search_form.fname.data, search_form.lname.data,
                       search_form.dial_code.data, search_form.phone_number.data)
 
     if search_form.validate_on_submit():
+        # Sets pagination to 1 on new search
         page = 1
     else:
+        # Sets page from args for next\prev
         page = request.args.get('page', 1, type=int)
 
-    if dial_code and phone_num:
-        query = Volunteer.query\
-            .join(Volunteer.phone_numbers)\
-            .filter(PhoneNumber.dial_code == dial_code)\
-            .filter(PhoneNumber.phone_number == phone_num)\
-            .distinct()
-    elif not fname or not lname:
-        query = Volunteer.query\
-            .filter(or_(Volunteer.fname.ilike(fname), Volunteer.lname.ilike(lname)))\
-            .distinct()
-    else:
-        query = Volunteer.query\
-            .filter(Volunteer.fname.ilike(fname))\
-            .filter(Volunteer.lname.ilike(lname))\
-            .distinct()
+    # Search by phone if provided
+    query = Volunteer.query\
+        .join(Volunteer.phone_numbers)\
+        .filter(PhoneNumber.dial_code == dial_code)\
+        .filter(PhoneNumber.phone_number == phone_num)\
+        .distinct() if dial_code and phone_num else None
+
+    # Search by fname and\or lname if phone not provided or not found
+    if not query or not query.first():
+        if not fname or not lname:
+            query = Volunteer.query\
+                .filter(or_(Volunteer.fname.ilike(fname), Volunteer.lname.ilike(lname)))\
+                .distinct()
+        else:
+            query = Volunteer.query\
+                .filter(Volunteer.fname.ilike(fname))\
+                .filter(Volunteer.lname.ilike(lname))\
+                .distinct()
 
     search_results = query.paginate(page, 10, False)
 
@@ -425,3 +436,11 @@ def search(fname, lname, dial_code, phone_num):
                            next_url=next_url, prev_url=prev_url)
 
 
+# Endpoint for updating volunteer's last_contacted
+@app.route('/<id>/cycle', methods=['GET', 'POST'])
+@login_required
+def cycle_to_bottom(id):
+    volunteer = Volunteer.query.filter_by(id=id).first()
+    volunteer.last_contacted = datetime.utcnow()
+    db.session.commit()
+    return '', 204

@@ -1,9 +1,47 @@
 <div>
-    
+  
+  <h2>{{ volunteer.fname }} {{ volunteer.lname }}</h2><br/>
+  
+  <button type="button" class="btn btn-primary"
+  data-toggle="modal" data-target="#contactInfoModal" data-backdrop="static" data-keyboard="false">
+  Call Volunteer
+</button>
+
+<ul>
+  <h4>Areas</h4><br/>
+  {% for area in volunteer.areas %}
+  <li>{{ area }}</li>
+  {% endfor %}
+</ul><br/><br/>
+
+<ul>
+  <h4>Willing to Foster</h4><br/>
+  {% for species in volunteer.species %}
+  <li>{{ species }}</li>
+  {% endfor %}
+</ul><br/><br/>
+
+<h4>Last Contacted</h4><br/>
+{{ volunteer.last_contacted }}<br/><br/>
+
+<h4>Notes</h4><br/>
+{{ volunteer.notes }}<br/><br/>
 
 
-    <h2>{{ volunteer.fname }} {{ volunteer.lname }}</h2><br/>
-    {% for number in volunteer.phone_numbers %}
+<a href="{{ url_for('edit_volunteer', id=volunteer.id) }}"><button>Edit</button></a>
+
+</div>
+
+
+<div class="modal fade" id="contactInfoModal" tabindex="-1" role="dialog" aria-labelledby="contactInfoModalTitle" aria-hidden="true">
+<div class="modal-dialog modal-dialog-centered" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="contactInfoModal">Contact Info</h5>
+
+    </div>
+    <div class="modal-body">
+        {% for number in volunteer.phone_numbers %}
         {% if number.primary_contact %}
         <h4>Phone 1</h4><br/>
         {{ number }}<br/><br/>
@@ -13,28 +51,22 @@
         {{ number }}
         {% endif %}
     {% endfor %}<br/><br/>
-
-    <ul>
-        <h4>Areas</h4><br/>
-        {% for area in volunteer.areas %}
-        <li>{{ area }}</li>
-        {% endfor %}
-    </ul><br/><br/>
-    
-    <ul>
-        <h4>Willing to Foster</h4><br/>
-        {% for species in volunteer.species %}
-        <li>{{ species }}</li>
-        {% endfor %}
-    </ul><br/><br/>
-
-    <h4>Last Contacted</h4><br/>
-    {{ volunteer.last_contacted }}<br/><br/>
-
-    <h4>Notes</h4><br/>
-    {{ volunteer.notes }}<br/><br/>
-
-    
-    <a href="{{ url_for('edit_volunteer', id=volunteer.id) }}"><button>Edit</button></a>
-
+    </div>
+    <div class="modal-footer">      
+      <form id="cycle_form" action="{{ url_for('cycle_to_bottom', id=volunteer.id) }}" method="POST" novalidate>
+        <div class="form-group">
+          <button onclick="submit_form()" type="button" class="btn btn-secondary" data-dismiss="modal">Cycle to Bottom</button>
+        </div>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Do Not Cycle</button>
+      </form>
+    </div>
+  </div>
 </div>
+</div>
+
+<!-- Modal forms need to be submitted through js. No one seems to know why. -->
+<script type="text/javascript">
+  function submit_form(){
+    document.getElementById("cycle_form").submit();
+  }
+</script>

@@ -112,4 +112,3 @@ class SearchForm(FlaskForm):
     dial_code = StringField('Phone', validators=[Regexp("^[0-9]{2}$|^[0-9]{3}$", message="Not a valid dial code."), Optional()])
     phone_number = StringField('Number', validators=[Regexp("^[0-9]{7}$", message="Not a valid phone number."), Optional()])
     submit = SubmitField('Search')
-
