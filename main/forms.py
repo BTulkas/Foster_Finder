@@ -106,9 +106,17 @@ class QueryForm(FlaskForm):
     submit = SubmitField('Search')
 
 
-class SearchForm(FlaskForm):
+class SearchVolunteerForm(FlaskForm):
     fname = StringField('Fist Name')
     lname = StringField('Last Name')
+    dial_code = StringField('Phone', validators=[Regexp("^[0-9]{2}$|^[0-9]{3}$", message="Not a valid dial code."), Optional()])
+    phone_number = StringField('Number', validators=[Regexp("^[0-9]{7}$", message="Not a valid phone number."), Optional()])
+    submit = SubmitField('Search')
+
+
+class SearchClinicForm(FlaskForm):
+    email = StringField('Email', validators=[Email()])
+    name = StringField('Clinic Name')
     dial_code = StringField('Phone', validators=[Regexp("^[0-9]{2}$|^[0-9]{3}$", message="Not a valid dial code."), Optional()])
     phone_number = StringField('Number', validators=[Regexp("^[0-9]{7}$", message="Not a valid phone number."), Optional()])
     submit = SubmitField('Search')

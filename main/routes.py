@@ -8,7 +8,7 @@ from werkzeug.utils import redirect
 from main import app, db
 from flask import render_template, flash, url_for, request
 
-from main.forms import LoginForm, ClinicForm, VolunteerForm, QueryForm, SearchForm
+from main.forms import LoginForm, ClinicForm, VolunteerForm, QueryForm, SearchVolunteerForm, SearchClinicForm
 from main.models import Clinic, Area, Volunteer, PhoneNumber, FosterSpecies
 
 
@@ -17,13 +17,13 @@ from main.models import Clinic, Area, Volunteer, PhoneNumber, FosterSpecies
 @login_required
 def index():
 
-    search_form = SearchForm(prefix='search_form')
+    search_form = SearchVolunteerForm(prefix='search_form')
     param_form = QueryForm(prefix='param_form')
 
     # Calls the search function when form is submitted
     if search_form.validate_on_submit() and search_form.data:
-        return search(search_form.fname.data, search_form.lname.data,
-                      search_form.dial_code.data, search_form.phone_number.data)
+        return search_volunteers(search_form.fname.data, search_form.lname.data,
+                                 search_form.dial_code.data, search_form.phone_number.data)
 
     if param_form.validate_on_submit():
         # Resets page on search
@@ -390,14 +390,14 @@ def edit_volunteer(id):
 
 
 @login_required
-def search(fname, lname, dial_code, phone_num):
+def search_volunteers(fname, lname, dial_code, phone_num):
 
-    search_form = SearchForm(prefix='search_form')
+    search_form = SearchVolunteerForm(prefix='search_form')
 
     # Resets the search page on search from inside the search page
     if search_form.validate_on_submit() and search_form.data:
-        return search(search_form.fname.data, search_form.lname.data,
-                      search_form.dial_code.data, search_form.phone_number.data)
+        return search_volunteers(search_form.fname.data, search_form.lname.data,
+                                 search_form.dial_code.data, search_form.phone_number.data)
 
     if search_form.validate_on_submit():
         # Sets pagination to 1 on new search
@@ -433,6 +433,45 @@ def search(fname, lname, dial_code, phone_num):
         if search_results.has_prev else None
 
     return render_template('search_volunteer.html', search_form=search_form, search_results=search_results.items,
+                           next_url=next_url, prev_url=prev_url)
+
+
+@login_required
+def search_clinics():
+
+    form = SearchClinicForm(prefix='search_form')
+    email = form.email.data
+    name = form.name.data
+    dial_code = form.dial_code.data
+    phone_num = form.phone_number.data
+
+    if form.validate_on_submit():
+        # Sets pagination to 1 on new search
+        page = 1
+    else:
+        # Sets page from args for next\prev
+        page = request.args.get('page', 1, type=int)
+
+    # Search by phone if provided
+    query = Clinic.query\
+        .join(Clinic.phone_numbers)\
+        .filter(PhoneNumber.dial_code == dial_code)\
+        .filter(PhoneNumber.phone_number == phone_num)\
+        .distinct() if dial_code and phone_num else None
+
+    if not query or not query.first():
+        query = Clinic.query\
+            .filter(or_(Clinic.name.ilike(name), Clinic.email.ilike(email)))\
+            .distinct()
+
+    search_results = query.paginate(page, 10, False)
+
+    next_url = url_for('search', page=search_results.next_num)\
+        if search_results.has_next else None
+    prev_url = url_for('search', page=search_results.prev_num)\
+        if search_results.has_prev else None
+
+    return render_template('search_volunteer.html', form=form, search_results=search_results.items,
                            next_url=next_url, prev_url=prev_url)
 
 
