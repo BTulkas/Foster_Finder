@@ -58,7 +58,7 @@ def index():
     else:
         # Called when passing empty form
         # Initializes areas args for query.filter to clinic area as default
-        vol_areas = current_user.area_name
+        vol_areas = current_user.area_name if current_user.area_name else [a.area for a in Area.query.all()]
         param_form.areas.data = vol_areas
 
     volunteers = Volunteer.query\
@@ -148,9 +148,14 @@ def register():
 
 
 @app.route('/edit-profile', methods=['GET', 'POST'])
+@app.route('/<id>/edit-clinic', methods=['GET', 'POST'])
 @login_required
-def edit_clinic():
-    form = ClinicForm(obj=current_user)
+def edit_clinic(id):
+    if id:
+        form = ClinicForm(obj=Clinic.query.filter_by(id=int(id)))
+    else:
+        form = ClinicForm(obj=current_user)
+
     # Removes email field, as it is pk and password change happens in specific page
     del form.email
     del form.password
@@ -427,19 +432,20 @@ def search_volunteers(fname, lname, dial_code, phone_num):
 
     search_results = query.paginate(page, 10, False)
 
-    next_url = url_for('search', page=search_results.next_num)\
+    next_url = url_for('search_volunteers', page=search_results.next_num)\
         if search_results.has_next else None
-    prev_url = url_for('search', page=search_results.prev_num)\
+    prev_url = url_for('search_volunteers', page=search_results.prev_num)\
         if search_results.has_prev else None
 
     return render_template('search_volunteer.html', search_form=search_form, search_results=search_results.items,
                            next_url=next_url, prev_url=prev_url)
 
 
+@app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def search_clinics():
 
-    form = SearchClinicForm(prefix='search_form')
+    form = SearchClinicForm()
     email = form.email.data
     name = form.name.data
     dial_code = form.dial_code.data
@@ -452,26 +458,27 @@ def search_clinics():
         # Sets page from args for next\prev
         page = request.args.get('page', 1, type=int)
 
-    # Search by phone if provided
+    # Search by phone separately to filter with dial_code and phone_number
     query = Clinic.query\
         .join(Clinic.phone_numbers)\
         .filter(PhoneNumber.dial_code == dial_code)\
         .filter(PhoneNumber.phone_number == phone_num)\
         .distinct() if dial_code and phone_num else None
 
+    # If phone is not provided or not found searches by name and email, defaults to all
     if not query or not query.first():
         query = Clinic.query\
             .filter(or_(Clinic.name.ilike(name), Clinic.email.ilike(email)))\
-            .distinct()
+            .distinct() if name else Clinic.query
 
     search_results = query.paginate(page, 10, False)
 
-    next_url = url_for('search', page=search_results.next_num)\
+    next_url = url_for('search_clinics', page=search_results.next_num)\
         if search_results.has_next else None
-    prev_url = url_for('search', page=search_results.prev_num)\
+    prev_url = url_for('search_clinics', page=search_results.prev_num)\
         if search_results.has_prev else None
 
-    return render_template('search_volunteer.html', form=form, search_results=search_results.items,
+    return render_template('search_clinic.html', form=form, search_results=search_results.items,
                            next_url=next_url, prev_url=prev_url)
 
 

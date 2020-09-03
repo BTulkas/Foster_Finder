@@ -1,0 +1,34 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h2>Search</h2>
+<form action="" method="POST" novalidate>
+    {{ form.hidden_tag() }}
+    <p>Name</p>
+    <p>{{ form.name(size=80) }}</p>
+    <p>Email</p>
+    <p>{{ form.email }} </p>
+    <p>Phone Number</p>
+    <p>{{ form.dial_code }}{{ form.phone_number }}</p>
+    <p> {{ form.submit() }}</p>
+</form><br/><br/>
+
+{% if search_results %}
+{% for clinic in search_results %}
+    {% include '_clinic.html' %}
+    <br/><br/>
+{% endfor %}
+
+{% if prev_url %}
+    <a href="{{ prev_url }}">Previous</a>
+{% endif %}
+
+{% if next_url %}
+    <a href="{{ next_url }}">Next</a>
+{% endif %}
+{% else %}
+<p>Sorry, couldn't find anything.</p>
+{% endif %}
+
+{% endblock %}

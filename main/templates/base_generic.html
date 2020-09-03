@@ -19,6 +19,9 @@
     <a href="{{ url_for('logout') }}">Logout</a>
     <a href="{{ url_for('add_volunteer') }}">Add Volunteer</a>
     {% endif %}
+    {% if current_user.admin %}
+    <a href="{{ url_for('search_clinics') }}">Find Clinic</a>
+    {% endif %}
 </div>
         <hr>
         {% with messages = get_flashed_messages() %}
