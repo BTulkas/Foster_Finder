@@ -6,6 +6,9 @@
 
 <form action="" method="POST" novalidate>
     {{ form.hidden_tag() }}
+    
+    <a href="{{ url_for('reset_password_request') }}">Reset Password</a>
+    
     <p>
         {{ form.name.label }}<br/>
         {{ form.name(size=80) }}<br/>

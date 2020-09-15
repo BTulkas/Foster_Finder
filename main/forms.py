@@ -120,3 +120,14 @@ class SearchClinicForm(FlaskForm):
     dial_code = StringField('Phone', validators=[Regexp("^[0-9]{2}$|^[0-9]{3}$", message="Not a valid dial code."), Optional()])
     phone_number = StringField('Number', validators=[Regexp("^[0-9]{7}$", message="Not a valid phone number."), Optional()])
     submit = SubmitField('Search')
+
+
+class PasswordResetRequestForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Send Reset Email')
+
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField('New password', validators=[DataRequired()])
+    password2 = PasswordField('Repeat password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Set New Password')

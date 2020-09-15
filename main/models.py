@@ -1,10 +1,11 @@
 from datetime import datetime
+from time import time
 
+import jwt
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from main import db, login
-
+from main import db, login, app
 
 # Helper tables for ManyToMany relationships, no class needed
 areas_volunteers = db.Table('areas_vs_volunteers',
@@ -34,6 +35,20 @@ class Clinic(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_password_reset_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time()+expires_in},
+            app.config['SECRET_KEY'], algorithm='HS256'
+        ).decode('utf-8')
+
+    @staticmethod
+    def verify_password_reset_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return Clinic.query.get(id)
 
     # Used by Flask-Login, will pass id as String so must be cast to int to be read by db
     @login.user_loader

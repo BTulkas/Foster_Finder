@@ -8,7 +8,9 @@ from werkzeug.utils import redirect
 from main import app, db
 from flask import render_template, flash, url_for, request
 
-from main.forms import LoginForm, ClinicForm, VolunteerForm, QueryForm, SearchVolunteerForm, SearchClinicForm
+from main.email import send_password_reset_email
+from main.forms import LoginForm, ClinicForm, VolunteerForm, QueryForm, SearchVolunteerForm, SearchClinicForm, \
+    PasswordResetRequestForm, PasswordResetForm
 from main.models import Clinic, Area, Volunteer, PhoneNumber, FosterSpecies
 
 
@@ -147,14 +149,17 @@ def register():
     return render_template('registration.html', title='Register', form=form)
 
 
-@app.route('/edit-profile', methods=['GET', 'POST'])
+@app.route('/<id>/edit-profile', methods=['GET', 'POST'])
 @app.route('/<id>/edit-clinic', methods=['GET', 'POST'])
 @login_required
 def edit_clinic(id):
-    if id:
-        form = ClinicForm(obj=Clinic.query.filter_by(id=int(id)))
-    else:
+    if int(id) == current_user.id:
         form = ClinicForm(obj=current_user)
+    else:
+        if current_user.admin:
+            form = ClinicForm(obj=Clinic.query.filter_by(id=int(id)))
+        else:
+            return redirect(url_for('index'))
 
     # Removes email field, as it is pk and password change happens in specific page
     del form.email
@@ -490,3 +495,31 @@ def cycle_to_bottom(id):
     volunteer.last_contacted = datetime.utcnow()
     db.session.commit()
     return '', 204
+
+
+@app.route('/reset-password-request', methods=['GET', 'POST'])
+def reset_password_request():
+    form = PasswordResetRequestForm()
+
+    if form.validate_on_submit():
+        clinic = Clinic.query.filter_by(email=form.email.data).first()
+        if clinic:
+            send_password_reset_email(clinic)
+            flash('Please check your inbox')
+
+    return render_template('reset_password_request.html', title='Reset Password', form=form)
+
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    clinic = Clinic.verify_password_reset_token(token)
+    if not clinic:
+        return redirect(url_for('index'))
+
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        clinic.set_password(form.password.data)
+        db.session.commit()
+        return redirect(url_for('login'))
+
+    return render_template('reset_password.html', form=form)
