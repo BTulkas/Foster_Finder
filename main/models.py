@@ -25,6 +25,7 @@ class Clinic(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     phone_numbers = db.relationship('PhoneNumber', backref='clinic', lazy='subquery')
     area_name = db.Column(db.String(80), db.ForeignKey('area.area'), nullable=True)
+    active = db.Column(db.Boolean, default=True)
     admin = db.Column(db.Boolean, default=False)
 
     def __repr__(self):

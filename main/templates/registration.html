@@ -77,7 +77,14 @@
         <span style="color: red;">[{{ error }}]</span>
         {% endfor %}
     </p>
-    
+
+    <p>
+        {{ form.recaptcha }}
+        {% for error in form.recaptcha.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+
     <p>
         {{ form.submit() }}
     </p>

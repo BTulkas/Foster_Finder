@@ -118,7 +118,7 @@ def logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and not current_user.admin:
         return redirect(url_for('index'))
 
     form = ClinicForm()

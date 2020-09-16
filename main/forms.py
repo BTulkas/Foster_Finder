@@ -1,5 +1,5 @@
 from flask_login import current_user
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, IntegerField, \
     SelectMultipleField, FormField, widgets, TextAreaField, HiddenField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Optional, Regexp
@@ -12,6 +12,7 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me')
+    recaptcha = RecaptchaField()
     submit = SubmitField('Sign In')
 
 
@@ -64,10 +65,12 @@ class ClinicForm(FlaskForm):
     main_number = FormField(PhoneForm)
     emergency_number = FormField(PhoneForm)
     area = SelectField('Area', validators=[DataRequired()], choices=[(i.area, i.area) for i in Area.query.all()])
+    recaptcha = RecaptchaField()
     submit = SubmitField('Register')
 
     # Called on field by default with pattern validate_<field_name>
-    def validate_email(self, email):
+    @staticmethod
+    def validate_email(email):
         clinic = Clinic.query.filter_by(email=email.data).first()
         if clinic is not None:
             raise ValidationError('This email has already been registered.')
