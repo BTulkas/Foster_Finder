@@ -8,6 +8,7 @@ The application creates a shared list of volunteers between clinics and shelters
 Foster Finder is currently under development. The vast majority of core systems are complete and functional.
 TO DO:
 * Clinic activation request
+* Error handling
 * Internationalization
 * UI\UX
 
@@ -49,6 +50,7 @@ Additionally, addresses and fostering records are not saved so Volunteers cannot
 
 ## Installation and Launch
 Requires Python 3.8. All dependencies should be available with CLI command `pip install -r requirements.txt`.
-Make sure to set your own environment variables in `config.py`. Recaptcha keys in the same file are read from a file instead of environment variable out of personal preference, this is not mandatory.
+Make sure to set your own environment variables in `config.py` for email and recaptcha.
+The ADMIN value in `config.py` can be set to a list either manually or with something like python-decouple.
 To run development server use CLI command `flask run` in root directory.
 For migration management refer to Flask-Migrate [documentation](https://flask-migrate.readthedocs.io/en/latest/).

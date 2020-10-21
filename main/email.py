@@ -13,7 +13,7 @@ def send_email(subject, sender, recipients, text_body, html_body):
 def send_password_reset_email(clinic):
     token = clinic.get_password_reset_token()
     send_email('Foster Finder - Reset Your Password',
-               sender=app.config['ADMINS'][0],
+               sender=app.config['ADMIN'],
                recipients=[clinic.email],
                text_body=render_template('reset_password_email.txt',
                                          clinic=clinic, token=token),
