@@ -1,53 +1,91 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <h1 style="margin-inline-start: 5%">Welcome {{ current_user.name }}</h1>
+    </div>
 
-<h1>Welcome {{ current_user.name }}</h1>
-<h2><a href="{{ url_for('add_volunteer') }}">Add Volunteer</a></h2>
 
-<h2>Search</h2>
-<form action="" method="POST" novalidate>
-    {{ search_form.hidden_tag() }}
-    <p>First Name</p>
-    <p>{{ search_form.fname(size=80) }}</p>
-    <p> Last Name</p>
-    <p>{{ search_form.lname(size=80) }} </p>
-    <p>Phone Number</p>
-    <p>{{ search_form.dial_code }}{{ search_form.phone_number }}</p>
-    <p> {{ search_form.submit() }}</p>
-</form><br/><br/>
+    <div class="row">
+        
+        <div class="col-sm-6">
+            <h2>Find Volunteers</h2>
+            <form action="" method="POST" novalidate class="container-fluid">
+                {{ param_form.hidden_tag() }}
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ param_form.areas.label }}</br>
+                        {{ param_form.areas(class_="form_ul") }}
+                        {% for error in param_form.areas.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="col-sm">
+                        {{ param_form.species.label }}</br>
+                        {{ param_form.species(class_="form_ul") }}
+                        {% for error in param_form.species.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>        
+                </div>
+                <p>
+                    {{ param_form.submit() }}
+                </p>
+            </form>
+        </div>
+                
+        <div class="col-sm">
+            <h2>Search</h2>
+            <form action="" method="POST" novalidate class="container-fluid">
+                {{ search_form.hidden_tag() }}
+                <div id="search_form" class="row">
+                    <div class="col-sm-auto">
+                        <p>First Name</p>
+                        <p>{{ search_form.fname(size=30) }}</p>
+                    </div>
+                    <div class="col-sm">
+                        <p> Last Name</p>
+                        <p>{{ search_form.lname(size=30) }} </p>
+                    </div>
+                </div>
+                <div id="search_form" class="row">
+                    <div class="col-sm">
+                        <p>Phone Number</p>
+                        <p>{{ search_form.dial_code(size=5) }}-{{ search_form.phone_number }}</p>
+                    </div>
+                </div>
+                <p> {{ search_form.submit() }}</p>
+            </form>
+        </div>
 
-<h2>Sort By</h2>
-<form action="" method="POST" novalidate>
-    {{ param_form.hidden_tag() }}
-    <span>
-        {{ param_form.areas.label }}<br/>
-        {{ param_form.areas }}<br/>
-        {% for error in param_form.areas.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
+    </div>
+    
+    
+    <div class="row">
+        <div class="col-md-auto offset-md-3">
+            {% for volunteer in volunteers %}
+            {% include '_volunteer.html' %}
+            {% endfor %}
+        </div>
+    </div>
 
-        {{ param_form.species.label }}<br/>
-        {{ param_form.species }}<br/>
-        {% for error in param_form.species.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </span>
-    <p>
-        {{ param_form.submit() }}
-    </p>
-</form>
-
-{% if prev_url %}
-    <a href="{{ prev_url }}">Previous</a>
-{% endif %}
-
-{% for volunteer in volunteers %}
-    {% include '_volunteer.html' %}
-{% endfor %}
-
-{% if next_url %}
-    <a href="{{ next_url }}">Next</a>
-{% endif %}
-
+    <div class="row justify-content-center" style="width: 30vw; margin-inline-start: 30vw;">
+        <div class="col-md-auto">
+            {% if prev_url %}
+            <a href="{{ prev_url }}" type="button" class="btn btn-primary">Previous</a>
+            {% elif volunteers %} <!-- shows inactive button only if there are search results -->
+            <button type="button" class="btn btn-primary" disabled>Previous</button>
+            {% endif %}
+        </div>
+        <div class="col-md">
+            {% if next_url %}
+            <a href="{{ next_url }}" type="button" class="btn btn-primary">Next</a>
+            {% elif volunteers %} <!-- shows inactive button only if there are search results -->
+            <button type="button" class="btn btn-primary" disabled>Next</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

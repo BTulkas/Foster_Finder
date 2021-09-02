@@ -1,0 +1,42 @@
+* {
+  box-sizing: border-box;
+}
+
+#nav_wrapper a:visited{
+  color:#f8eee7;
+  
+}
+
+#site_wrapper {
+  display: grid;
+  grid-template-columns: 10% 90%;
+  min-height: 100vh;
+}
+
+#nav_wrapper {
+  font-size: 1.2rem;
+  padding-top: 30%;
+}
+
+#nav_wrapper ul{
+  padding-inline: 15%;
+  padding-left: 15%;
+  line-height: 3rem;
+}
+
+#body_wrapper {
+  padding-top: 3%;
+  padding-left: 5%;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.form_ul {
+  padding-inline-start: 5%;
+}
+
+#search_form {
+  line-height: 0.33;
+}

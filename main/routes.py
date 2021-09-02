@@ -254,7 +254,7 @@ def add_volunteer():
                 # Appends the species as queried from the db (db.relationship represents a List)
                 vol.species.append(FosterSpecies.query.filter_by(species=species).first())
 
-            # Generates PhoneNumber(s) from form and assigns them to the new volunteer
+            # Generates PhoneNumber(s) from form
             number1 = PhoneNumber(dial_code=form.phone1.dial_code.data,
                                   phone_number=form.phone1.phone_number.data,
                                   primary_contact=form.phone1.primary_contact.data)
@@ -262,8 +262,24 @@ def add_volunteer():
                                   phone_number=form.phone2.phone_number.data,
                                   primary_contact=form.phone2.primary_contact.data)
 
+            # Checks if number1 is empty. If number2 is filled, moves the data to number1. If both are empty raises error.
+            if not number1.not_empty():
+                if number2.not_empty():
+                    number1 = number2
+                    number2.dial_code = '' # the expected value for empty StringField 
+                    number2.phone_number = ''
+                else:
+                    form.phone1.phone_number.errors.append("Must have at least one phone number.")
+                    return render_template('add_volunteer.html', title='Add Volunteer', form=form)
+
+            # Defaults to number1 being primary if both are checked or unchecked
+            if number1.primary_contact == number2.primary_contact:
+                number1.primary_contact = True
+                number2.primary_contact = False
+
             vol.phone_numbers.append(number1)
-            vol.phone_numbers.append(number2)
+            if number2.dial_code and number2.phone_number:
+                vol.phone_numbers.append(number2)
             db.session.add(vol)
             db.session.commit()
             flash('Volunteer '+vol.fname + ' ' + vol.lname + ' registered successfully.')

@@ -3,9 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="cd022b79-b4c6-437f-9611-1cd299d604e9" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/email.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/email.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/main/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/base_generic.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/base_generic.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/main/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +32,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Serverless Apps/LearnTailwind" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.completion" />
   </component>
   <component name="RecentsManager">
@@ -56,28 +56,6 @@
       <updated>1590414768473</updated>
     </task>
     <servers />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="586" y="198" key="#Inspections" timestamp="1597581374673">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="586" y="198" key="#Inspections/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1597581374673" />
-    <state x="2406" y="232" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1599987346591">
-      <screen x="1920" y="0" width="1440" height="860" />
-    </state>
-    <state x="2406" y="232" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1920.1040/1920.0.1440.860@1920.0.1440.860" timestamp="1599987346591" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1602143075313">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1602143075313" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1597839946413">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1597839946413" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1600076076670">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040/1920.0.1440.860@0.0.1920.1040" timestamp="1600076076670" />
   </component>
   <component name="masterDetails">
     <states>

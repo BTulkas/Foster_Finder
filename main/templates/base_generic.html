@@ -3,42 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     {% if title %}
     <title>{{ title }}</title>
     {% else %}
     <title>Foster Finder</title>
     {% endif %}
-    <script src="https://www.google.com/recaptcha/api.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}" type="text/css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </head>
-<body>
-<div>
-    <a href="{{ url_for('index') }}">Home</a>
-    {% if current_user.is_anonymous %}
-    <a href="{{ url_for('login') }}">Login</a>
-    {% else %}
-    <a href="{{ url_for('add_volunteer') }}">Add Volunteer</a>
-    <a href="{{ url_for('edit_clinic', id=current_user.id) }}">Edit Profile</a>
-    <a href="{{ url_for('logout') }}">Logout</a>
-    {% endif %}
-    {% if current_user.admin %}
-    <a href="{{ url_for('search_clinics') }}">Find Clinic</a>
-    {% endif %}
-</div>
-        <hr>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
 
-{% block content %}{% endblock %}
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<body>
+<div id="site_wrapper">
+
+<div id="nav_wrapper" class="border-right border-secondary link-danger" style="background-color: #74706a;">
+    <ul>
+        <li>
+            <a href="{{ url_for('index') }}">Home</a>
+        </li>
+        {% if current_user.is_anonymous %}
+        <li>
+            <a href="{{ url_for('login') }}">Login</a>
+        </li>
+        {% else %}
+        <li>
+            <a href="{{ url_for('add_volunteer') }}">Add Volunteer</a>
+        </li>
+        <li>
+            <a href="{{ url_for('edit_clinic', id=current_user.id) }}">Edit Profile</a>
+        </li>
+        <li>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </li>
+        {% endif %}
+        {% if current_user.admin %}
+        <li>
+            <a href="{{ url_for('search_clinics') }}">Find Clinic</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+
+<div id="body_wrapper" style="background-color: #e3f3f3;">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+        {% block content %}{% endblock %}
+</div>
+</div>
 </body>
 </html>

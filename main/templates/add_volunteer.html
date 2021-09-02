@@ -3,100 +3,153 @@
 {% block content %}
 
 <h1>Add Volunteer</h1>
-
-<form action="" method="POST" novalidate>
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.fname.label }}<br/>
-        {{ form.fname(size=80) }}<br/>
-        {% for error in form.fname.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
+<div class="container-fluid">
+    <form action="" method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.fname.label }}<br/>
+                {{ form.fname(size=30) }}<br/>
+                {% for error in form.fname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+        <br/>
     
-    <p>
-        {{ form.lname.label }}<br/>
-        {{ form.lname(size=64) }}<br/>
-        {% for error in form.lname.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.lname.label }}<br/>
+                {{ form.lname(size=30) }}<br/>
+                {% for error in form.lname.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+            <br/>
+
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.phone1.dial_code.label }}  {{ form.phone1.phone_number.label }}<br/>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-sm-auto">
+                {{ form.phone1.dial_code(size=5) }}<br/>
+                {% for error in form.phone1.dial_code.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+
+            <div class="col-sm-auto">
+                -{{ form.phone1.phone_number(size=20) }}<br/>
+                {% for error in form.phone1.phone_number.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+            
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.phone1.primary_contact }}
+                {{ form.phone1.primary_contact.label }}<br/>
+                {% for error in form.phone1.primary_contact.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <br/>
+
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.phone2.dial_code.label }}  {{ form.phone2.phone_number.label }}<br/>
+            </div>
+        </div>
+        <div class="row no-gutters">
+            <div class="col-sm-auto">
+                {{ form.phone2.dial_code(size=5) }}<br/>
+                {% for error in form.phone2.dial_code.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+
+            <div class="col-sm-auto">
+                -{{ form.phone2.phone_number(size=20) }}<br/>
+                {% for error in form.phone2.phone_number.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.phone2.primary_contact }}
+                {{ form.phone2.primary_contact.label }}<br/>
+                {% for error in form.phone2.primary_contact.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.areas.label }}<br/>
+                {{ form.areas }}<br/>
+                {% for error in form.areas.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+                </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.species.label }}<br/>
+                {{ form.species }}<br/>
+                {% for error in form.species.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-auto">
+                {{ form.notes.label }}<br/>
+                {{ form.notes(cols=50, rows=7) }}<br/>
+                {% for error in form.notes.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <p>
+            {{ form.submit() }}
+        </p>
+        
+    </form>
+</div>
+
+<script>
+    // Simple script to make Primary Contact checkboxes mutually exclusive in the UI
+    // Additional handling exists server side in case this is bypassed for some reason
+    $(document).ready(function(){
+
+    var primary1 = $("#phone1-primary_contact");
+    var primary2 = $("#phone2-primary_contact");
+
+    primary1.change(function(){
+        if(this.checked){
+            primary2.prop('checked', false);
+        }
+    })
     
-    <p>
-        {{ form.phone1.dial_code.label }}<br/>
-        {{ form.phone1.dial_code(size=32) }}<br/>
-        {% for error in form.phone1.dial_code.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    
-    <p>
-        {{ form.phone1.phone_number.label }}<br/>
-        {{ form.phone1.phone_number(size=32) }}<br/>
-        {% for error in form.phone1.phone_number.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
+    primary2.change(function(){
+        if(this.checked){
+            primary1.prop('checked', false);
+        }
+    })
 
-    <p>
-        {{ form.phone1.primary_contact.label }}<br/>
-        {{ form.phone1.primary_contact }}<br/>
-        {% for error in form.phone1.primary_contact.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
+    })
 
-    <p>
-        {{ form.phone2.dial_code.label }}<br/>
-        {{ form.phone2.dial_code(size=32) }}<br/>
-        {% for error in form.phone2.dial_code.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    
-    <p>
-        {{ form.phone2.phone_number.label }}<br/>
-        {{ form.phone2.phone_number(size=32) }}<br/>
-        {% for error in form.phone2.phone_number.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-
-    <p>
-        {{ form.phone2.primary_contact.label }}<br/>
-        {{ form.phone2.primary_contact }}<br/>
-        {% for error in form.phone2.primary_contact.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-    
-    <p>
-        {{ form.areas.label }}<br/>
-        {{ form.areas }}<br/>
-        {% for error in form.areas.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-
-    <p>
-        {{ form.species.label }}<br/>
-        {{ form.species }}<br/>
-        {% for error in form.species.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-
-    <p>
-        {{ form.notes.label }}<br/>
-        {{ form.notes }}<br/>
-        {% for error in form.notes.errors %}
-        <span style="color: red;">[{{ error }}]</span>
-        {% endfor %}
-    </p>
-
-    <p>
-        {{ form.submit() }}
-    </p>
-
-</form>
-{% endblock %}
+</script>
+    {% endblock %}

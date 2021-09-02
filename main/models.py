@@ -86,9 +86,10 @@ class PhoneNumber(db.Model):
     def __repr__(self):
         return str(self.dial_code) + "-" + str(self.phone_number)
 
+    # Returns True if the fields are both filled
     # Used in routes to check for empty phone numbers with other attributes before saving to db.
     def not_empty(self):
-        if not self.dial_code and not self.phone_number:
+        if self.dial_code == '' or self.phone_number == '':
             return False
         else:
             return True

@@ -1,37 +1,50 @@
-<div>
+<div class="card" style="width: 30vw;">
+  <!-- margin-inline-start: 20vw; -->
+  <div class="card-body">
+    <h2 class="card-title" style="text-align: center;">{{ volunteer.fname }} {{ volunteer.lname }}</h2><br/>
+    
+    <div class="card-text">
   
-  <h2>{{ volunteer.fname }} {{ volunteer.lname }}</h2><br/>
-  
-  <button type="button" class="btn btn-primary"
-  data-toggle="modal" data-target="#contactInfoModal" data-backdrop="static" data-keyboard="false">
-  Call Volunteer
-</button>
 
 <ul>
-  <h4>Areas</h4><br/>
+  <h4 class="card-title">Areas</h4>
   {% for area in volunteer.areas %}
   <li>{{ area }}</li>
   {% endfor %}
-</ul><br/><br/>
+</ul><br/>
 
 <ul>
-  <h4>Willing to Foster</h4><br/>
+  <h4 class="card-title">Willing to Foster</h4>
   {% for species in volunteer.species %}
   <li>{{ species }}</li>
   {% endfor %}
-</ul><br/><br/>
+</ul><br/>
 
-<h4>Last Contacted</h4><br/>
+<ul> <!-- to line up with previous entries, no actual lists here -->
+<h4 class="card-title">Last Contacted</h4>
 {{ volunteer.last_contacted }}<br/><br/>
 
-<h4>Notes</h4><br/>
+<h4 class="card-title">Notes</h4>
 {{ volunteer.notes }}<br/><br/>
-
-
-<a href="{{ url_for('edit_volunteer', id=volunteer.id) }}"><button>Edit</button></a>
-
+</ul>
+<div class="container">
+  <div class="row">
+    <div class="col-auto mr-auto">
+      <button type="button" class="btn btn-primary btn-lg" 
+      data-toggle="modal" data-target="#contactInfoModal" data-backdrop="static" data-keyboard="false">
+      Call Volunteer
+    </button>
+    </div>
+    
+    <div class="col-auto">
+      <a href="{{ url_for('edit_volunteer', id=volunteer.id) }}" type="button" class="btn btn-secondary">Edit</a>
+    </div>
+  </div>
 </div>
 
+</div>
+</div>
+</div>
 
 <div class="modal fade" id="contactInfoModal" tabindex="-1" role="dialog" aria-labelledby="contactInfoModalTitle" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -52,12 +65,12 @@
         {% endif %}
     {% endfor %}<br/><br/>
     </div>
-    <div class="modal-footer">      
+    <div class="modal-footer justify-content-center">
       <form id="cycle_form" action="{{ url_for('cycle_to_bottom', id=volunteer.id) }}" method="POST" novalidate>
         <div class="form-group">
           <button onclick="submit_form()" type="button" class="btn btn-secondary" data-dismiss="modal">Cycle to Bottom</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Do Not Cycle</button>
         </div>
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Do Not Cycle</button>
       </form>
     </div>
   </div>
